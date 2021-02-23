@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["AsteroidML"] = [{"text":"impl Unpin for GridWorld","synthetic":true,"types":[]},{"text":"impl Unpin for Grid","synthetic":true,"types":[]},{"text":"impl Unpin for GameObject","synthetic":true,"types":[]},{"text":"impl Unpin for Spaceship","synthetic":true,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

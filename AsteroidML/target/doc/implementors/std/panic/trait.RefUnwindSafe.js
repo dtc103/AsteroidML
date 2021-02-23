@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["AsteroidML"] = [{"text":"impl RefUnwindSafe for GridWorld","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for Grid","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for GameObject","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for Spaceship","synthetic":true,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

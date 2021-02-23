@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["AsteroidML"] = [{"text":"impl Sync for GridWorld","synthetic":true,"types":[]},{"text":"impl Sync for Grid","synthetic":true,"types":[]},{"text":"impl Sync for GameObject","synthetic":true,"types":[]},{"text":"impl Sync for Spaceship","synthetic":true,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

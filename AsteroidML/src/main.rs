@@ -1,74 +1,9 @@
-use std::fmt;
 use rand::{Rng, thread_rng};
 use std::collections::HashMap;
 use std::ops::{Index, IndexMut};
 
-
-#[derive(Debug)]
-enum GameObjectTypes{
-    Asteroid,
-    Empty,
-    Goal
-}
-
-#[derive(Debug)]
-enum Moves{
-    Up,
-    Down, 
-    Left, 
-    Right
-}
-
-#[derive(Debug)]
-struct GridWorld{
-    x_length: u32,
-    y_length: u32,
-    grids: Vec<GameObjectTypes>,
-}
-impl GridWorld{
-    fn new(x_size: u32, y_size: u32) -> Self{
-        let mut tmp_grid = Vec::new();
-
-        for y in 0..y_size{
-            for x in 0..x_size{
-                tmp_grid.push(GameObjectTypes::Empty);
-            }
-        }
-        GridWorld{x_length: x_size, y_length: y_size, grids: tmp_grid}
-    }
-    fn get_grid(&mut self, x: usize, y: usize) -> Result<GameObjectTypes, String>{
-        if x >= self.x_length as usize || y >= self.y_length as usize{
-            return Err(String::from("dimensions do not fit"));
-        }
-
-        Ok(self.grids[(x + y * self.x_length as usize) as usize])
-    }
-}
-impl Index<usize> for GridWorld{
-    type Output = GameObjectTypes;
-
-    fn index(&self, index: usize) -> &Self::Output{
-        &GameObjectTypes::Asteroid
-    }
-
-}
-impl IndexMut<usize> for GridWorld{
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut GameObjectTypes::Asteroid
-    }
-}
-
-impl fmt::Display for GridWorld{
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result{
-        for y in 0..self.y_length{
-            for x in 0..self.x_length{
-                write!(f, "{:?}\t", self.grids[(x + y*self.x_length) as usize]);
-            }
-            write!(f, "\n");
-        }
-        Ok(())
-    }
-}
+mod grid_world;
+use grid_world::*;
 
 #[derive(Debug)]
 struct Spaceship{
@@ -78,41 +13,64 @@ struct Spaceship{
 
 fn main() {
     let mut grid_world = GridWorld::new(6, 6);
-
     init_grid_world(&mut grid_world);
-    let ss = Spaceship{x:0, y:0};
-
-    println!("{:?}", get_grid_world_policy(&grid_world));
-    println!("{:?}", get_grid_world_value(&grid_world));
+    let policy = get_grid_world_policy(&grid_world);
     
+    let mut grid_values = HashMap::new();
+    grid_values.insert(WorldObjectTypes::Asteroid, None);
+    grid_values.insert(WorldObjectTypes::Empty, Some(-1));
+    grid_values.insert(WorldObjectTypes::Goal, Some(10));
 
 
+
+    println!("{}", grid_world);
 }
 
 fn init_grid_world(grid_world: &mut GridWorld){
-    grid_world.get_grid(0, 0).unwrap() = GameObjectTypes::Asteroid;
-    grid_world.get_grid(1, 0).unwrap() = GameObjectTypes::Asteroid;
-    grid_world.get_grid(3, 0).unwrap() = GameObjectTypes::Asteroid;
+    grid_world.set_grid(0, 0, WorldObjectTypes::Asteroid);
+    grid_world.set_grid(1, 0, WorldObjectTypes::Asteroid);
+    grid_world.set_grid(3, 0, WorldObjectTypes::Asteroid);
     
-    grid_world.get_grid(2, 1).unwrap() = GameObjectTypes::Asteroid;
+    grid_world.set_grid(2, 1, WorldObjectTypes::Asteroid);
     
-    grid_world.get_grid(4, 2).unwrap() = GameObjectTypes::Asteroid;
-    grid_world.get_grid(5, 2).unwrap() = GameObjectTypes::Asteroid;
+    grid_world.set_grid(4, 2, WorldObjectTypes::Asteroid);
+    grid_world.set_grid(5, 2, WorldObjectTypes::Asteroid);
     
-    grid_world.get_grid(2, 3).unwrap() = GameObjectTypes::Asteroid;
-    grid_world.get_grid(5, 3).unwrap() = GameObjectTypes::Asteroid;
+    grid_world.set_grid(2, 3, WorldObjectTypes::Asteroid);
+    grid_world.set_grid(5, 3, WorldObjectTypes::Asteroid);
 
-    grid_world.get_grid(0, 4).unwrap() = GameObjectTypes::Asteroid;
-    grid_world.get_grid(3, 4).unwrap() = GameObjectTypes::Asteroid;
+    grid_world.set_grid(0, 4, WorldObjectTypes::Asteroid);
+    grid_world.set_grid(3, 4, WorldObjectTypes::Asteroid);
 
-    grid_world.get_grid(5, 0).unwrap() = GameObjectTypes::Goal;
+    grid_world.set_grid(5, 0, WorldObjectTypes::Goal);
+}
+
+fn state_transition_probability_function(grid_world: &GridWorld, action: Moves, curr_position: (u32, u32), next_position: (u32, u32)) -> f64{
+    if curr_position == next_position{
+        return match curr_position{
+            //possibility to stay in current position with taking the correct way
+            (x, y) if (x == 0 && (action == Moves::Left || action == Moves::LeftJump)) 
+                || (x == grid_world.x_length - 1 && (action == Moves::Right || action == Moves::RightJump)) 
+                || (y == 0 && (action == Moves::Left || action == Moves::LeftJump))
+                || (y == grid_world.y_length - 1 && (action == Moves::Down || action == Moves::DownJump))
+            => 0.9,
+            (x, y) if (x == 0 || x == grid_world.x_length - 1) && (action == Moves::Up || action == Moves::UpJump || action == Moves::Down || action == Moves::DownJump)
+                ||  (y == 0 || y == grid_world.y_length - 1) && (action == Moves::Left || action == Moves::LeftJump || action == Moves::Right || action == Moves::RightJump)
+            => 0.05,
+            _ => 0.0,
+        };
+    }else{
+
+    }
+    
+    0.0
 }
 
 fn get_grid_world_value(grid_world: &GridWorld) -> Vec<f64>{
     let mut value = Vec::new();
 
-    for _ in 0..(grid_world.y_length * grid_world.y_length){
-        value.push(0.0);
+    for i in 0..(grid_world.y_length * grid_world.y_length){
+        
     }
     value
 }
@@ -124,11 +82,15 @@ fn get_grid_world_policy(grid_world: &GridWorld) -> Vec<Moves>{
 
     for _ in 0..(grid_world.y_length * grid_world.y_length){
         value.push(
-            match rng.gen_range(0..4){
+            match rng.gen_range(0..7){
                 0 => Moves::Up,
                 1 => Moves::Right,
                 2 => Moves::Down,
                 3 => Moves::Left,
+                4 => Moves::UpJump,
+                5 => Moves::RightJump,
+                6 => Moves::DownJump,
+                7 => Moves::LeftJump,
                 _ => Moves::Up,
             }
         );

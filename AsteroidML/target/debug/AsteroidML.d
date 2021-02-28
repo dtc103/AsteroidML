@@ -1,1 +1,1 @@
-C:\Users\viskej\programming\AsteroidML\AsteroidML\target\debug\AsteroidML.exe: C:\Users\viskej\programming\AsteroidML\AsteroidML\src\main.rs
+F:\programming\Rust\rust_projects\AsteroidML\AsteroidML\target\debug\AsteroidML.exe: F:\programming\Rust\rust_projects\AsteroidML\AsteroidML\src\main.rs
